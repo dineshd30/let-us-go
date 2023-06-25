@@ -20,6 +20,9 @@ func main() {
 
 func prepareRace() {
 	finishTime, cancel := startTheRace()
+	// https://stackoverflow.com/questions/8593645/is-it-ok-to-leave-a-channel-open
+	// No need to close the finishTime channel since it is shared channel
+	// Garbage collection will automatically reclaim it when it is no longer used and needed.
 	// defer close(finishTime)
 	r := <-finishTime
 	cancel()
@@ -29,7 +32,6 @@ func prepareRace() {
 }
 
 func startTheRace() (chan raceResult, func()) {
-	// https://stackoverflow.com/questions/8593645/is-it-ok-to-leave-a-channel-open
 	finishTime := make(chan raceResult)
 	done := make(chan struct{})
 	cancel := func() {

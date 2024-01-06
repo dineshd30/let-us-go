@@ -12,9 +12,10 @@ type raceResult struct {
 }
 
 func main() {
-	fmt.Println("I am in the main method")
+	fmt.Println("Demo: Goroutine")
 	prepareRace()
-	time.Sleep(12 * time.Second)
+	// Uncomment below line to see how much time other lost cars took
+	//time.Sleep(12 * time.Second)
 	fmt.Println("Race finished")
 }
 
@@ -24,10 +25,10 @@ func prepareRace() {
 	// No need to close the finishTime channel since it is shared channel
 	// Garbage collection will automatically reclaim it when it is no longer used and needed.
 	// defer close(finishTime)
-	r := <-finishTime
+	raceResult := <-finishTime
 	cancel()
 
-	fmt.Printf("Winner is %s", r.car)
+	fmt.Printf("Winner is %s", raceResult.car)
 	fmt.Println()
 }
 
@@ -47,7 +48,7 @@ func startTheRace() (chan raceResult, func()) {
 
 func race(car string) raceResult {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	randomNumber := r.Intn(10)
+	randomNumber := r.Intn(10) + 1
 	time.Sleep(time.Second * time.Duration(randomNumber))
 	fmt.Printf("%s took %d seconds to complete the race", car, randomNumber)
 	fmt.Println()
@@ -55,6 +56,7 @@ func race(car string) raceResult {
 }
 
 func car1(finishTime chan<- raceResult, done <-chan struct{}) {
+	fmt.Println("Car 1 started")
 	select {
 	case finishTime <- race("Car 1"):
 		fmt.Println("Car 1 has finished the race")
@@ -65,6 +67,7 @@ func car1(finishTime chan<- raceResult, done <-chan struct{}) {
 }
 
 func car2(finishTime chan<- raceResult, done <-chan struct{}) {
+	fmt.Println("Car 2 started")
 	select {
 	case finishTime <- race("Car 2"):
 		fmt.Println("Car 2 has finished the race")
@@ -75,6 +78,7 @@ func car2(finishTime chan<- raceResult, done <-chan struct{}) {
 }
 
 func car3(finishTime chan<- raceResult, done <-chan struct{}) {
+	fmt.Println("Car 3 started")
 	select {
 	case finishTime <- race("Car 3"):
 		fmt.Println("Car 3 has finished the race")

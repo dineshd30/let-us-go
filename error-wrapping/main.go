@@ -15,9 +15,10 @@ var (
 	ErrBadRequest = errors.New("bad request")
 )
 
-func someFunction(value int) error {
-	err := errors.New("some internal unknown error")
+func doSomething(value int) error {
+	// some brilliant logic
 
+	err := errors.New("some internal unknown error")
 	// Wrap sentinel error with original error
 	switch value {
 	case 1:
@@ -41,16 +42,16 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	value, _ := strconv.Atoi(scanner.Text())
-	err := someFunction(value)
+	err := doSomething(value)
 	switch {
 	case errors.Is(err, ErrBadRequest):
-		fmt.Printf("Got ErrBadRequest - %v\n", err) // 400
+		fmt.Printf("Got http 400 bad request - %v\n", err) // return http 400 bad request
 
 	case errors.Is(err, ErrNotFound):
-		fmt.Printf("Got ErrNotFound - %v\n", err) // 404
+		fmt.Printf("Got http 404 not found - %v\n", err) // return http 404 not found
 
 	case errors.Is(err, ErrInternal):
-		fmt.Printf("Got ErrInternal - %v\n", err) // 500
+		fmt.Printf("Got http 500 internal server error - %v\n", err) // return http 500 internal server error
 
 	case err == nil:
 		fmt.Println("No error")

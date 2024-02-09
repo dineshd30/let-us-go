@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "github.com/dineshd30/golang/grpc-todos/todos";
+
+message CreateResponse {
+  string error = 1;
+  string id = 2;
+}
+
+message CreateRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  bool completed = 4;
+  int64 createdAt = 5;
+}
+
+service Todos {
+  rpc Create(CreateRequest) returns (CreateResponse);
+}
